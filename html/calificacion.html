@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reseñas - Cafetín Escolar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/commit.css">
+    <link rel="stylesheet" href="../css/encabezado.css">
+    
+</head>
+<body>
+    <!--barra de navegacion-->
+<header id="encabezado_principal">
+    <div class="contenedor">
+        <h1 id="titulo_logo" class="main-title">Coffee Main()</h1>
+        <nav id="navegacion_principal">
+            <span id="estado_sesion">
+                <i class="fas fa-user-circle"></i> ClienteUCV
+            </span>
+        </nav>
+    </div>
+</header>
+
+     <!--barra de navegacion-->
+    <nav class="navbar">
+        <div class="user-profile">
+            
+            <span class="user-name">ClienteUCV</span>
+        </div>
+
+        <div class="menu-wrapper">
+            <input type="checkbox" id="menu-toggle">
+            
+            <label for="menu-toggle" class="hamburger-label">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <ul class="nav-menu">
+                <li><a href="historialCompras.html">Ver Historial de Compras</a></li>
+                <li><a href="lealtad.html">Consultar Puntos de Lealtad</a></li>
+                <li><a href="menu.html">Volver al menú</a></li>
+                <li><a href="index.html">Cerrar Sesión</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div style="text-align: center;"><h2 class="section-title">Valorar Productos</h2></div>
+
+        <div class="card">
+            <h3>Deja tu opinión</h3>
+            <form id="review-form">
+                <div class="form-group">
+                    <label>Producto o Servicio</label>
+                    <select id="review-product" required>
+                        <option value="" disabled selected>Selecciona qué vas a valorar...</option>
+                        <option value="Productos">Productos</option>
+                        <option value="Servicio General del Cafetín">Servicio General del Cafetín</option>
+                        <option value="reclamo">Reclamo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Calificación</label>
+                    <div class="star-rating" id="star-rating-container">
+                        <i class="fas fa-star" data-rating="1"></i>
+                        <i class="fas fa-star" data-rating="2"></i>
+                        <i class="fas fa-star" data-rating="3"></i>
+                        <i class="fas fa-star" data-rating="4"></i>
+                        <i class="fas fa-star" data-rating="5"></i>
+                    </div>
+                    <input type="hidden" id="review-rating" value="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Tu Comentario</label>
+                    <textarea id="review-text" rows="4" placeholder="¿Qué te pareció el producto o servicio?" required></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary">Publicar Reseña</button>
+            </form>
+        </div>
+
+        <div style="text-align: center;"><h2 class="section-title">Comentarios Recientes</h2></div>
+        <div id="reviews-container">
+            </div>
+
+    </div>
+
+    <script>
+        // --- 1. CONFIGURACIÓN DEL SISTEMA DE ESTRELLAS INTERACTIVO ---
+        const stars = document.querySelectorAll('#star-rating-container i');
+        const ratingInput = document.getElementById('review-rating');
+
+        stars.forEach(star => {
+            // Efecto al hacer clic
+            star.addEventListener('click', function() {
+                const rating = this.getAttribute('data-rating');
+                ratingInput.value = rating; // Guardar valor en el input oculto
+                
+                // Colorear estrellas según selección
+                stars.forEach(s => {
+                    if (s.getAttribute('data-rating') <= rating) {
+                        s.style.color = '#E59D2C'; // Color activo
+                    } else {
+                        s.style.color = '#ccc'; // Color inactivo
+                    }
+                });
+            });
+
+            // Efecto al pasar el mouse (Hover)
+            star.addEventListener('mouseover', function() {
+                const rating = this.getAttribute('data-rating');
+                stars.forEach(s => {
+                    if (s.getAttribute('data-rating') <= rating) {
+                        s.style.color = '#F3D58D'; // Color hover suave
+                    } else {
+                        s.style.color = '#ccc';
+                    }
+                });
+            });
+
+            // Restaurar colores al quitar el mouse
+            star.addEventListener('mouseout', function() {
+                const currentRating = ratingInput.value;
+                stars.forEach(s => {
+                    if (s.getAttribute('data-rating') <= currentRating) {
+                        s.style.color = '#E59D2C';
+                    } else {
+                        s.style.color = '#ccc';
+                    }
+                });
+            });
+        });
+
+        // --- 2. LÓGICA DE LOCALSTORAGE Y PUBLICACIÓN ---
+        
+        // Cargar reseñas guardadas o un array vacío si no hay
+        let reviews = JSON.parse(localStorage.getItem('cafetin_reviews')) || [];
+        const reviewForm = document.getElementById('review-form');
+        const reviewsContainer = document.getElementById('reviews-container');
+
+        // Función para dibujar las estrellas estáticas en las reseñas ya publicadas
+        function generateStarsHTML(rating) {
+            let starsHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    starsHTML += '<i class="fas fa-star"></i>'; // Estrella llena
+                } else {
+                    starsHTML += '<i class="far fa-star"></i>'; // Estrella vacía
+                }
+            }
+            return starsHTML;
+        }
+
+        // Función para mostrar las reseñas en la pantalla
+        function renderReviews() {
+            reviewsContainer.innerHTML = ''; // Limpiar contenedor
+
+            if (reviews.length === 0) {
+                reviewsContainer.innerHTML = '<div class="no-reviews">Aún no hay comentarios. ¡Sé el primero en opinar!</div>';
+                return;
+            }
+
+            // Invertir el array para mostrar los más nuevos primero
+            const reversedReviews = [...reviews].reverse();
+
+            reversedReviews.forEach(review => {
+                const reviewCard = document.createElement('div');
+                reviewCard.classList.add('review-card');
+                
+                reviewCard.innerHTML = `
+                    <div class="review-header">
+                        <div class="review-author">
+                            <i class="fas fa-user-circle" style="font-size: 1.5rem; color: #2E4365;"></i>
+                            ${review.author}
+                        </div>
+                        <div class="review-date">${review.date}</div>
+                    </div>
+                    <div class="review-product">${review.product}</div>
+                    <div class="review-stars">
+                        ${generateStarsHTML(review.rating)}
+                    </div>
+                    <div class="review-text">"${review.text}"</div>
+                `;
+                
+                reviewsContainer.appendChild(reviewCard);
+            });
+        }
+
+        // --- 3. EVENTO DE ENVÍO DEL FORMULARIO ---
+        reviewForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Evitar que la página se recargue
+
+            const product = document.getElementById('review-product').value;
+            const text = document.getElementById('review-text').value;
+            const rating = parseInt(ratingInput.value);
+
+            // Validar que hayan seleccionado una calificación
+            if (rating === 0) {
+                alert('Por favor, selecciona una calificación en estrellas.');
+                return;
+            }
+
+            // Obtener fecha actual
+            const date = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' });
+
+            // Crear el objeto de la nueva reseña
+            const newReview = {
+                author: "ClienteUCV", // Aquí tomaríamos el nombre del usuario logueado
+                product: product,
+                rating: rating,
+                text: text,
+                date: date
+            };
+
+            // Añadir al array de reseñas
+            reviews.push(newReview);
+
+            // Guardar en LocalStorage
+            localStorage.setItem('cafetin_reviews', JSON.stringify(reviews));
+
+            // Actualizar la pantalla
+            renderReviews();
+
+            // Limpiar el formulario
+            reviewForm.reset();
+            ratingInput.value = 0;
+            stars.forEach(s => s.style.color = '#ccc'); // Resetear estrellas visuales
+            
+            alert('¡Gracias por tu reseña!');
+        });
+
+        // --- 4. INICIALIZACIÓN ---
+        // Al cargar la página, mostramos las reseñas guardadas
+        document.addEventListener('DOMContentLoaded', renderReviews);
+
+    </script>
+</body>
+</html>

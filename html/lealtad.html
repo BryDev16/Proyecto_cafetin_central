@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>puntos de lealtad</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <!--para que se ejecute el js y no tener tanto en el html-->
+    <script src="../js/script.js" defer></script>
+    <link rel="stylesheet" href="../css/encabezado.css">
+</head>
+<body>
+    <header id="encabezado_principal">
+    <div class="contenedor">
+        <h1 id="titulo_logo" class="main-title">Coffee Main()</h1>
+        <nav id="navegacion_principal">
+            <span id="estado_sesion">
+                <i class="fas fa-user-circle"></i> ClienteUCV
+            </span>
+        </nav>
+    </div>
+</header>
+     <!--barra de navegacion-->
+    <nav class="navbar">
+        <div class="user-profile">
+            
+            <span class="user-name">ClienteUCV</span>
+        </div>
+
+        <div class="menu-wrapper">
+            <input type="checkbox" id="menu-toggle">
+            
+            <label for="menu-toggle" class="hamburger-label">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <ul class="nav-menu">
+                <li><a href="#">Ver Historial de Compras</a></li>
+                <li><a href="calificacion.html">Hacer una calificación</a></li>
+                <li><a href="menu.html">Volver al menú</a></li>
+                <li><a href="index.html">Cerrar Sesión</a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="layout-principal">
+        
+        <aside class="columna-saldo">
+            <div class="saldo-panel">
+                <h2>Tu Saldo Actual</h2>
+                <p class="saldo-cantidad" id="puntos-actuales">250</p>
+                <p style="margin-top: 10px; font-size: 0.9rem;">Puntos acumulados</p>
+            </div>
+        </aside>
+
+        <main class="columna-premios">
+            <h2 class="seccion-titulo">Canjea tus Puntos</h2>
+            
+            <div class="premios-grid">
+                <div class="tarjeta-premio">
+                    <div class="icono-premio">🥐</div>
+                    <div class="titulo-premio">1 Bebida a elección</div>
+                    <div class="costo-premio">60 pts</div>
+                    <button class="btn-canjear" data-premio="Bebida" data-costo="60">Canjear</button>
+                </div>
+
+                <div class="tarjeta-premio">
+                    <div class="icono-premio">☕</div>
+                    <div class="titulo-premio">1 postre a elección</div>
+                    <div class="costo-premio">150 pts</div>
+                    <button class="btn-canjear" data-premio="postre" data-costo="150">Canjear</button>
+                </div>
+
+                <div class="tarjeta-premio">
+                    <div class="icono-premio">🥪</div>
+                    <div class="titulo-premio">2x1 en postres</div>
+                    <div class="costo-premio">500 pts</div>
+                    <button class="btn-canjear" data-premio="oferta" data-costo="500">Canjear</button>
+                </div>
+
+                <div class="tarjeta-premio">
+                    <div class="icono-premio">🎁</div>
+                    <div class="titulo-premio">20% descuento en almuerzos</div>
+                    <div class="costo-premio">300 pts</div>
+                    <button class="btn-canjear" data-premio="descuento" data-costo="300">Canjear</button>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <div id="notificacion"></div>
+    <!-- FOOTER -->
+        <footer class="footer">
+            Coffee Main(). Cafetin Central. Hecho por y para estudiantes.
+        </footer>
+    </div>
+
+    <script>
+        // Lógica de funcionamiento
+        let puntosUsuario = 150; 
+
+        const elementoPuntos = document.getElementById('puntos-actuales');
+        const botonesCanjear = document.querySelectorAll('.btn-canjear');
+        const notificacion = document.getElementById('notificacion');
+
+        function actualizarInterfaz() {
+            elementoPuntos.textContent = puntosUsuario;
+
+            botonesCanjear.forEach(boton => {
+                const costoItem = parseInt(boton.getAttribute('data-costo'));
+                if (puntosUsuario < costoItem) {
+                    boton.disabled = true;
+                    boton.textContent = "Puntos insuficientes";
+                } else {
+                    boton.disabled = false;
+                    boton.textContent = "Canjear";
+                }
+            });
+        }
+
+        function mostrarMensaje(mensaje, esExito) {
+            notificacion.textContent = mensaje;
+            notificacion.style.backgroundColor = esExito ? "#466b5c" : "#8A3B08";
+            notificacion.style.display = 'block';
+
+            setTimeout(() => {
+                notificacion.style.display = 'none';
+            }, 3000);
+        }
+
+        botonesCanjear.forEach(boton => {
+            boton.addEventListener('click', function() {
+                const costo = parseInt(this.getAttribute('data-costo'));
+                const premio = this.getAttribute('data-premio');
+
+                if (puntosUsuario >= costo) {
+                    puntosUsuario -= costo;
+                    mostrarMensaje(`¡Éxito! Has canjeado ${premio}`, true);
+                    actualizarInterfaz();
+                } else {
+                    mostrarMensaje('Saldo insuficiente', false);
+                }
+            });
+        });
+
+        // Inicializar
+        actualizarInterfaz();
+    </script>
+</body>
+</html>

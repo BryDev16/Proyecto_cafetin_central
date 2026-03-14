@@ -1,0 +1,903 @@
+body{
+    background: linear-gradient(to right,#F3d58d,#ebddc5, #F3d58d);
+    font-family: Montserrat, Arial, Helvetica, sans-serif;
+    font-size: 24px;
+    color: #223;
+    margin: 0;
+
+}
+
+/*----------login----------*/
+
+.login{
+  display: flex;
+  justify-content: center; /* Centrado horizontal */
+  align-items: center;     /* Centrado vertical */
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;         /* Centrado horizontal */
+  margin-top: 20px;
+  padding: 40px;
+  background-color: #fafaef;
+  box-shadow: 0 10px 25px rgba(46, 67, 101, 0.15);
+  border-radius: 15px;
+  border-top: 5px solid #E59D2C; 
+
+}
+
+.login-btn {
+    
+    width: 100%;
+    padding: 12px;
+    background-color: #2E4365;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-bottom: 20px;
+}
+
+.login-btn:hover {
+    /* Hover: Citrine Brown */
+    background-color: #8A3B08;
+    transform: translateY(-2px);
+}
+.login-btn a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.input-group label {
+    
+    display: block;
+    margin-bottom: 5px;
+    color: #2E4365;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+}
+
+.input-group input {
+    
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #F3D58D;
+    border-radius: 8px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.3s;
+    margin-bottom: 30px;
+}
+
+.input-group input:focus {
+            /* Foco: Marigold */
+            border-color: #E59D2C;
+        }
+
+
+/*----------barra de navegacion del sitio----------*/
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2c3e50;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Sección del Usuario (Foto y Nombre) */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ecf0f1;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* Menú Hamburguesa (Lógica con Checkbox) */
+#menu-toggle {
+    display: none; /* Escondemos el checkbox */
+}
+
+.hamburger-label {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 10;
+}
+
+.hamburger-label span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+/* Lista de Opciones */
+.nav-menu {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background-color: #34495e;
+    width: 200px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none; /* Escondido por defecto */
+    flex-direction: column;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.nav-menu li {
+    border-bottom: 1px solid #2c3e50;
+}
+
+.nav-menu li a {
+    display: block;
+    padding: 15px 20px;
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.nav-menu li a:hover {
+    background-color: #1abc9c;
+}
+
+/* Mostrar menú cuando el checkbox esté marcado */
+#menu-toggle:checked ~ .nav-menu {
+    display: flex;
+}
+
+/* Animación básica del icono hamburguesa */
+#menu-toggle:checked ~ .hamburger-label span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+#menu-toggle:checked ~ .hamburger-label span:nth-child(2) {
+    opacity: 0;
+}
+#menu-toggle:checked ~ .hamburger-label span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/*productos del carrito*/
+.cart-container{
+    position: relative;
+    margin-right: 20px; 
+    cursor: pointer;
+}
+.fas fa-shopping-cart{
+    font-size: 1.5rem;
+        color: #EBDDC5;
+}
+.cart-count{
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #E59D2C; /* Marigold */
+    color: #2E4365; /* Police Blue */
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border: 2px solid #2E4365;
+}
+
+/*footer*/
+.footer {
+    text-align: center;
+    background-color: #e4c273;
+    padding: 15px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    border-top: 3px solid #8A3B08;
+}
+/**/
+
+
+/*----------lista de productos----------*/
+
+/* Contenedor principal de los productos */
+/**/.products-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Estilo de cada tarjeta de producto */
+
+.product-card {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.product-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-bottom: 3px solid #F3D58D; /* Buff para separar imagen de texto */
+}
+
+.product-info {
+    padding: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-info h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+    color: #2E4365; /* Police Blue */
+}
+
+.product-info p.price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #8A3B08; /* Citrine Brown para el precio */
+    margin-bottom: 1rem;
+}
+
+.add-to-cart-btn {
+    background-color: #E59D2C; /* Marigold */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #8A3B08; /* Citrine Brown al pasar el ratón */
+    transform: translateY(-2px);
+}
+
+.info{
+    font-size: 16px;
+    font-weight: 400;
+    color: #8a8a8a;
+}
+
+.img_producto{
+    width: 100px;
+    height: 100px;
+    border-radius: 5px;
+    margin: 10px auto 10px auto;
+}
+
+/*-------estilos para el agregado de productos--------*/
+
+/* Contenedor principal de la cuadrícula */
+.products-grid {
+    display: grid;
+    /* Esto crea columnas automáticas de mínimo 250px */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px; /* Espacio entre cuadritos */
+    padding: 20px 0;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Estilo de cada tarjeta (cuadrito) */
+.product-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #eee;
+}
+
+.product-card:hover {
+    transform: translateY(-8px); /* Efecto de levante al pasar el mouse */
+}
+
+/* Ajuste de imágenes para que todas midan lo mismo */
+.product-image, .product-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover; /* Recorta la imagen para que no se deforme */
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Información dentro del cuadrito */
+.product-info {
+    padding: 15px;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.product-price {
+    font-weight: bold;
+    color: #e67e22;
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+}
+
+/* Botón de agregar */
+.add-to-cart-btn, .btn-add-cart {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+}
+
+.add-to-cart-btn:hover, .btn-add-cart:hover {
+    background-color: #219150;
+}
+
+/* Separador elegante */
+.separator {
+    border: 0;
+    height: 1px;
+    background: #ddd;
+    margin: 40px 0;
+}
+
+
+
+/*notificacion de agregado al carrito*/
+
+/* Mensaje de confirmación del carrito */
+.cart-confirmation {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #2E4365; /* Police Blue */
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cart-confirmation.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/*----------Canjeo de puntos de lealtad----------*/
+
+/* Contenedor Principal en 2 columnas */
+.layout-principal {
+    max-width: 1100px;
+    margin: 2rem auto;
+    display: flex;
+    gap: 3rem;
+    padding: 0 1rem;
+    align-items: flex-start;
+}
+
+/* Columna Izquierda: Saldo */
+.columna-saldo {
+    flex: 1;
+    position: sticky;
+    top: 20px;
+}
+
+.saldo-panel {
+    background-color: #8A3B08; /* Citrine Brown */
+    color: #EBDDC5; /* Pearl */
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.saldo-panel h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.saldo-cantidad {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #E59D2C; /* Marigold */
+    margin: 0;
+}
+
+/* Columna Derecha: Recompensas */
+.columna-premios {
+    flex: 2;
+}
+
+.seccion-titulo {
+    color: #8A3B08; /* Citrine Brown */
+    border-bottom: 3px solid #E59D2C; /* Marigold */
+    padding-bottom: 10px;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+.premios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.tarjeta-premio {
+    background-color: #F3D58D; /* Buff */
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid #E59D2C;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+}
+
+.tarjeta-premio:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(46, 67, 101, 0.2);
+}
+
+.icono-premio {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.titulo-premio {
+    font-weight: bold;
+    color: #8A3B08; /* Citrine Brown */
+    margin-bottom: 5px;
+}
+
+.costo-premio {
+    color: #2E4365; /* Police Blue */
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Botones */
+.btn-canjear {
+    background-color: #E59D2C; /* Marigold */
+    color: #2E4365; /* Police Blue */
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-canjear:hover:not(:disabled) {
+    background-color: #8A3B08; /* Citrine Brown */
+    color: #EBDDC5; /* Pearl */
+}
+
+.btn-canjear:disabled {
+    background-color: #d1bfa7;
+    color: #8a8a8a;
+    cursor: not-allowed;
+}
+
+/* Notificación */
+#notificacion {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/*----------carrito----------*/
+
+.cart-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(46, 67, 101, 0.6); /* Police Blue semitransparente */
+    z-index: 1000;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.cart-overlay.show {
+    display: block;
+    opacity: 1;
+}
+
+.cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: -400px; /* Oculto por defecto fuera de la pantalla */
+    width: 100%;
+    max-width: 350px;
+    height: 100vh;
+    background-color: #EBDDC5; /* Pearl */
+    box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+    z-index: 1001;
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-sidebar.open {
+    right: 0; /* Desliza hacia adentro */
+}
+
+.cart-header {
+    background-color: #2E4365; /* Police Blue */
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.close-cart {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.cart-items-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.cart-item-sidebar {
+    background-color: white;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid #E59D2C; /* Marigold */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.cart-item-info h4 {
+    margin: 0 0 5px 0;
+    color: #2E4365;
+    font-size: 0.95rem;
+}
+
+.cart-item-info p {
+    margin: 0;
+    color: #8A3B08; /* Citrine Brown */
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.remove-item-btn {
+    background: none;
+    border: none;
+    color: #d9534f;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.cart-footer {
+    padding: 20px;
+    background-color: white;
+    border-top: 2px solid #F3D58D; /* Buff */
+}
+
+.cart-total-sidebar {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2E4365;
+    margin-bottom: 15px;
+}
+
+.btn-checkout {
+    display: block;
+    width: 100%;
+    background-color: #E59D2C; /* Marigold */
+    color: white;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-checkout:hover {
+    background-color: #8A3B08; /* Citrine Brown */
+}
+
+.empty-cart-msg {
+    text-align: center;
+    color: #2E4365;
+    margin-top: 50px;
+    font-style: italic;
+        }
+
+.fas fa-shopping-cart{
+    font-size: 1.5rem;
+}
+
+.cart-count{
+    position: absolute; 
+    top: -10px;
+    right: -15px; 
+    background-color: #E59D2C; color: white; 
+    border-radius: 50%; padding: 2px 6px; 
+    font-size: 0.8rem; font-weight: bold;
+}
+
+.cart-container{
+    position: relative;
+    cursor: pointer;
+}
+
+/*realizar pago*/
+
+.user-profile { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+}
+.profile-pic { 
+    width: 40px; 
+    height: 40px; 
+    border-radius: 50%; 
+    border: 2px solid #EBDDC5; 
+}
+.loyalty-badge { 
+    background-color: #E59D2C; 
+    color: #2E4365; 
+    padding: 4px 10px; 
+    border-radius: 20px; 
+    font-size: 0.85rem; 
+    font-weight: bold; 
+    display: flex; 
+    align-items: center; gap: 5px; 
+}
+.container { 
+    max-width: 900px; 
+    margin: 2rem auto; 
+    padding: 0 20px; }
+    .section-title { 
+        text-align: center; 
+        color: #2E4365; 
+        margin-bottom: 2rem; 
+        font-size: 2rem; 
+        border-bottom: 4px solid #E59D2C; 
+        display: inline-block; 
+        padding-bottom: 5px; 
+    }
+
+.hidden { display: none !important; }
+.card { background-color: white; border-radius: 15px; padding: 2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.08); border-top: 5px solid #E59D2C; }
+        .cart-item { display: flex; justify-content: space-between; border-bottom: 1px solid #F3D58D; padding: 10px 0; }
+        .cart-total { display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: bold; color: #8A3B08; margin-top: 15px; padding-top: 15px; border-top: 2px solid #2E4365; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .form-group input { width: 100%; padding: 12px; border: 2px solid #F3D58D; border-radius: 8px; box-sizing: border-box; outline: none; transition: 0.3s; }
+        .form-group input:focus { border-color: #E59D2C; }
+        .row { display: flex; gap: 15px; }
+        .row .form-group { flex: 1; }
+        .btn-primary { width: 100%; background-color: #2E4365; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 1rem; }
+        .btn-primary:hover { background-color: #8A3B08; transform: translateY(-2px); }
+        .btn-primary:disabled { background-color: #ccc; cursor: not-allowed; transform: none; }
+        .status-screen { text-align: center; padding: 3rem; }
+        .status-screen i { font-size: 4rem; margin-bottom: 1rem; }
+        .loading i { color: #E59D2C; animation: spin 1s linear infinite; }
+        .success i { color: #2E4365; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .history-item { background-color: #F3D58D; padding: 15px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #2E4365; }
+        .history-details p { margin: 5px 0; }
+        .history-points { background-color: #E59D2C; color: white; padding: 5px 12px; border-radius: 15px; font-weight: bold; font-size: 0.9rem; }
+        
+        /* Enlace para volver a comprar */
+        .back-link { display: block; text-align: center; margin-top: 15px; color: #2E4365; text-decoration: none; font-weight: bold; }
+        .back-link:hover { text-decoration: underline; color: #8A3B08; }
+
+/*historial de compras*/
+/* --- Contenedores Principales --- */
+        .container { max-width: 800px; margin: 2rem auto; padding: 0 20px; }
+        
+        .section-title { 
+            text-align: center; 
+            color: #2E4365; 
+            margin-bottom: 2rem; 
+            font-size: 2rem; 
+            border-bottom: 4px solid #E59D2C; 
+            display: inline-block; 
+            padding-bottom: 5px; 
+        }
+        
+        .card { 
+            background-color: white; 
+            border-radius: 15px; 
+            padding: 2rem; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08); 
+            border-top: 5px solid #E59D2C; 
+        }
+        
+        /* --- Tarjetas de Pedidos --- */
+        .order-card { 
+            background-color: #fcf9f2; 
+            border: 1px solid #F3D58D; 
+            border-radius: 10px; 
+            padding: 15px; 
+            margin-bottom: 20px; 
+            transition: transform 0.2s;
+        }
+
+        .order-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .order-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 2px solid #EBDDC5; 
+            padding-bottom: 10px; 
+            margin-bottom: 10px; 
+        }
+        
+        .order-id { font-weight: bold; color: #8A3B08; font-size: 1.1rem; }
+        .order-date { color: #666; font-size: 0.9rem; }
+        
+        .order-items { margin: 10px 0; padding: 0; list-style: none; }
+        .order-items li { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 5px 0; 
+            border-bottom: 1px dashed #EBDDC5; 
+            font-size: 0.95rem; 
+        }
+        .order-items li:last-child { border-bottom: none; }
+        
+        .order-footer { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-top: 15px; 
+            padding-top: 10px; 
+            background-color: white; 
+            border-radius: 8px; 
+            padding: 10px; 
+        }
+        
+        .order-total { font-size: 1.2rem; font-weight: bold; color: #2E4365; }
+        .order-points { 
+            background-color: #E59D2C; 
+            color: white; 
+            padding: 4px 12px; 
+            border-radius: 15px; 
+            font-weight: bold; 
+            font-size: 0.9rem; 
+        }
+        
+        /* --- Estado Vacío --- */
+        .empty-history { text-align: center; padding: 3rem; color: #8A3B08; }
+        .empty-history i { font-size: 4rem; color: #F3D58D; margin-bottom: 1rem; }
+        
+        .back-btn { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            background-color: #2E4365; 
+            color: white; 
+            text-decoration: none; 
+            padding: 10px 20px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            transition: 0.3s; 
+            margin-bottom: 20px; 
+        }
+        .back-btn:hover { background-color: #8A3B08; }
+
+.contenedor-nuevos-productos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    justify-items: center;
+}
+
+/* Estilo para las tarjetas que genera el JS */
+
+.product-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+
+.btn-add-cart {
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-add-cart:hover {
+    background-color: #d35400;
+}

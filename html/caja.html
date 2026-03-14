@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/caja.css">
+    <link rel="stylesheet" href="../css/encabezado.css">
+    <title>Punto de Venta - Personal de Caja</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+<body>
+
+    <!--barra de navegacion-->
+<header id="encabezado_principal">
+    <div class="contenedor">
+        <h1 id="titulo_logo" class="main-title">Coffee Main()</h1>
+        <nav id="navegacion_principal">
+            <span id="estado_sesion">
+                <i class="fas fa-user-circle"></i> caja_01
+            </span>
+        </nav>
+    </div>
+</header>
+
+    <!--barra de navegacion-->
+    <nav class="navbar">
+        </div>
+
+        <!-- oculta el carrito -->
+        <div style="flex:1"></div> 
+        <div class="menu-wrapper">
+            <input type="checkbox" id="menu-toggle">
+            
+            <label for="menu-toggle" class="hamburger-label">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <ul class="nav-menu">
+                <li><a href="index.html">Cerrar Sesión</a></li>
+            </ul>
+        </div>
+    </nav>
+
+        <!-- aqui empieza lo chidooo -->
+        
+    <main class="caja-container">
+        <h1 class="page-title">Interfaz de Caja</h1>
+        <div class="caja-layout">
+            <!-- Columna de productos -->
+            <section class="productos-columna">
+                <h2><i class="fas fa-utensils"></i> Productos disponibles</h2>
+                <div class="products-grid" id="products-container-caja">
+                    
+                </div>
+            </section>
+
+            <!-- Columna de pedido actual -->
+            <section class="pedido-columna">
+                <div class="resumen-pedido">
+                    <h2><i class="fas fa-clipboard-list"></i> Pedido actual</h2>
+                    <ul class="pedido-lista" id="order-items-list">
+                        <li class="pedido-vacio">El pedido está vacío</li>
+                    </ul>
+                    <div class="pedido-total">
+                        <span>Total:</span>
+                        <span id="order-total">$0.00</span>
+                    </div>
+                    <button class="btn-finalizar" id="finalizar-btn" disabled>Finalizar venta</button>
+                </div>
+            </section>
+        </div>
+    </main>
+</nav>
+    <!-- FOOTER -->
+        <footer class="footer">
+            Coffee Main(). Cafetin Central. Hecho por y para estudiantes.
+        </footer>
+    </div>
+
+    
+<script>
+    // 1. Obtener el usuario activo (para mostrar su nombre)
+    const usuarioActivo = JSON.parse(localStorage.getItem('usuario_activo'));
+    if (usuarioActivo && usuarioActivo.usuario) {
+        const userDisplay = document.getElementById('user-name-display');
+        if(userDisplay) userDisplay.textContent = usuarioActivo.usuario;
+    }
+
+    // 2. LEER PRODUCTOS DESDE EL ALMACÉN DEL ADMINISTRADOR
+    // Si no hay nada, cargamos un arreglo vacío o los originales por si acaso.
+    let products = JSON.parse(localStorage.getItem('cafetin_productos')) || [];
+
+    // Si por alguna razón el almacén está completamente vacío (el admin borró todo o es primera vez), 
+    // puedes decidir si mostrar vacío o recargar los originales. Aquí lo dejamos vacío por seguridad.
+    
+    let currentOrder = [];
+    const productsContainer = document.getElementById('products-container-caja');
+    const orderList = document.getElementById('order-items-list');
+    const orderTotalSpan = document.getElementById('order-total');
+    const finalizarBtn = document.getElementById('finalizar-btn');
+
+    // 3. Renderizar Productos
+    function renderProducts() {
+        if (!productsContainer) return;
+        productsContainer.innerHTML = '';
+        
+        if (products.length === 0) {
+            productsContainer.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #777;">No hay productos disponibles en el menú. El administrador debe agregarlos.</p>';
+            return;
+        }
+
+        products.forEach(product => {
+            const card = document.createElement('div');
+            card.classList.add('product-card');
+            
+            // Usamos product.nombre o product.name dependiendo de cómo se guardó
+            const nombreMostrar = product.nombre || product.name;
+            const precioMostrar = Number(product.precio || product.price);
+            const imagenMostrar = product.imagen || product.image;
+
+            card.innerHTML = `
+                <img src="${imagenMostrar}" alt="${nombreMostrar}" class="product-image" onerror="this.src='https://via.placeholder.com/220x150?text=Imagen+no+disponible'">
+                <div class="product-info" style="padding: 15px; text-align: center;">
+                    <h3>${nombreMostrar}</h3>
+                    <p class="price" style="font-weight: bold; color: #e67e22; font-size: 1.2rem; margin: 10px 0;">$${precioMostrar.toFixed(2)}</p>
+                    <button class="add-to-order-btn" data-id="${product.id}" style="width: 100%; padding: 10px; background-color: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        <i class="fas fa-plus-circle"></i> Agregar
+                    </button>
+                </div>
+            `;
+            productsContainer.appendChild(card);
+        });
+
+        // Agregar eventos a los botones "Agregar"
+        document.querySelectorAll('.add-to-order-btn').forEach(btn => {
+            btn.addEventListener('click', addToOrder);
+        });
+    }
+
+    // 4. Función para agregar producto al pedido
+    function addToOrder(e) {
+        const btn = e.currentTarget;
+        const productId = parseInt(btn.dataset.id) || btn.dataset.id; // Por si el ID es string o número
+        
+        // Buscar el producto en la lista general
+        const product = products.find(p => p.id == productId);
+
+        if(!product) return;
+
+        // Buscar si ya existe en el pedido actual
+        const existingItem = currentOrder.find(item => item.id == productId);
+        
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            // Guardamos normalizando los nombres
+            currentOrder.push({ 
+                id: product.id,
+                name: product.nombre || product.name, 
+                price: Number(product.precio || product.price),
+                quantity: 1 
+            });
+        }
+
+        renderOrder();
+    }
+
+    // 5. Función para eliminar un item del pedido 
+    window.removeFromOrder = function(index) {
+        const item = currentOrder[index];
+        if (item.quantity > 1) {
+            item.quantity -= 1;
+        } else {
+            currentOrder.splice(index, 1);
+        }
+        renderOrder();
+    };
+
+    // 6. Renderizar el pedido actual
+    function renderOrder() {
+        if (!orderList) return;
+
+        if (currentOrder.length === 0) {
+            orderList.innerHTML = '<li style="text-align: center; color: #999; padding: 20px;">El pedido está vacío</li>';
+            orderTotalSpan.textContent = '$0.00';
+            finalizarBtn.disabled = true;
+            return;
+        }
+
+        let html = '';
+        let total = 0;
+
+        currentOrder.forEach((item, index) => {
+            const subtotal = item.price * item.quantity;
+            total += subtotal;
+            html += `
+                <li class="pedido-item" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee;">
+                    <div class="pedido-item-info">
+                        <div class="pedido-item-nombre" style="font-weight: bold;">${item.name}</div>
+                        <div class="pedido-item-detalle" style="font-size: 0.9em; color: #666;">Cant: ${item.quantity} x $${item.price.toFixed(2)}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="pedido-item-precio" style="font-weight: bold; color: #333;">$${subtotal.toFixed(2)}</span>
+                        <button class="pedido-item-eliminar" onclick="removeFromOrder(${index})" style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.1rem;">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </li>
+            `;
+        });
+
+        orderList.innerHTML = html;
+        orderTotalSpan.textContent = `$${total.toFixed(2)}`;
+        finalizarBtn.disabled = false;
+    }
+
+    // 7. Función para finalizar venta
+    function finalizarVenta() {
+        if (currentOrder.length === 0) return;
+
+        const total = currentOrder.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+        
+        alert(` Venta Exitosa\nTotal cobrado: $${total.toFixed(2)}\n¡Imprimiendo recibo!`);
+
+        currentOrder = [];
+        renderOrder();
+    }
+
+    // 8. Inicializar la página
+    document.addEventListener('DOMContentLoaded', () => {
+        renderProducts();
+        renderOrder();
+        if(finalizarBtn) {
+            finalizarBtn.addEventListener('click', finalizarVenta);
+        }
+    });
+
+    /*funciones para guardar en el historial*/ 
+    function finalizarVenta() {
+    if (currentOrder.length === 0) return;
+
+    // 1. Calculamos el total y los puntos (ejemplo: 1 punto por cada $1)
+    const totalVenta = currentOrder.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    const puntosGanados = Math.floor(totalVenta);
+
+    // 2. Creamos el objeto de la orden para el historial
+    const nuevaOrden = {
+        id: Math.floor(1000 + Math.random() * 9000), // Genera un ID de 4 dígitos
+        fecha: new Date().toLocaleString(), // Fecha y hora actual
+        items: [...currentOrder], // Copiamos los productos actuales
+        total: totalVenta.toFixed(2),
+        puntos: puntosGanados
+    };
+
+    // 3. Obtener historial existente o crear uno nuevo
+    const historialExistente = JSON.parse(localStorage.getItem('cafetin_historial')) || [];
+    
+    // 4. Agregamos la nueva orden al inicio (para que aparezca de primera)
+    historialExistente.unshift(nuevaOrden);
+
+    // 5. Guardamos de nuevo en LocalStorage
+    localStorage.setItem('cafetin_historial', JSON.stringify(historialExistente));
+
+    // 6. (Opcional) Actualizar los puntos de lealtad del usuario activo
+    actualizarPuntosLealtad(puntosGanados);
+
+    alert(`🧾 Venta Exitosa\nID: #${nuevaOrden.id}\nTotal cobrado: $${totalVenta.toFixed(2)}\n¡Puntos sumados!`);
+
+    // Reiniciar el pedido en la interfaz
+    currentOrder = [];
+    renderOrder();
+}
+
+// Función extra para que los puntos también funcionen
+function actualizarPuntosLealtad(puntos) {
+    let puntosActuales = parseInt(localStorage.getItem('puntos_lealtad')) || 0;
+    localStorage.setItem('puntos_lealtad', puntosActuales + puntos);
+}
+
+</script>
+        
+    
+</body>
+</html>

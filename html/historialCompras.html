@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Compras - Cafetín Escolar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/encabezado.css">
+</head>
+<body>
+    <!-- Encabezado principal -->
+    <header id="encabezado_principal">
+        <div class="contenedor">
+            <h1 id="titulo_logo" class="main-title">Coffee Main()</h1>
+            <nav id="navegacion_principal">
+                <span id="estado_sesion">
+                    <i class="fas fa-user-circle"></i> ClienteUCV
+                </span>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Barra de navegación (solo carrito y menú a la derecha) -->
+    <nav class="navbar">
+        <div style="margin-left: auto; display: flex; align-items: center; gap: 20px;">
+            <div class="cart-container" id="open-cart-btn">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count">0</span>
+            </div>
+
+            <div class="menu-wrapper">
+                <input type="checkbox" id="menu-toggle">
+                <label for="menu-toggle" class="hamburger-label">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </label>
+                <ul class="nav-menu">
+                    <li><a href="lealtad.html">Consultar Puntos de Lealtad</a></li>
+                    <li><a href="calificacion.html">Hacer una calificación</a></li>
+                    <li><a href="menu.html">Volver al menú</a></li>
+                    <li><a href="index.html">Cerrar Sesión</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <a href="menu.html" class="back-btn"><i class="fas fa-arrow-left"></i> Volver al Menú</a>
+        
+        <div style="text-align: center;"><h2 class="section-title">Mi Historial de Compras</h2></div>
+        
+        <div class="card" id="history-container">
+            <!-- Aquí se cargarán dinámicamente los pedidos -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        Coffee Main(). Cafetin Central. Hecho por y para estudiantes.
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const historyContainer = document.getElementById('history-container');
+            
+            // Leer el historial guardado en LocalStorage
+            const historialGlobal = JSON.parse(localStorage.getItem('cafetin_historial')) || [];
+
+            if (historialGlobal.length === 0) {
+                historyContainer.innerHTML = `
+                    <div class="empty-history">
+                        <i class="fas fa-receipt"></i>
+                        <h3>Aún no tienes compras registradas</h3>
+                        <p>Tus pedidos aparecerán aquí una vez que finalices un pago.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let htmlContent = '';
+            
+            historialGlobal.forEach(orden => {
+                let itemsListHtml = '';
+                
+                orden.items.forEach(item => {
+                    const itemQty = item.cantidad || item.quantity || 1;
+                    const subtotal = item.precio * itemQty;
+                    itemsListHtml += `
+                        <li>
+                            <span>${itemQty}x ${item.nombre || item.name}</span>
+                            <span>$${subtotal.toFixed(2)}</span>
+                        </li>
+                    `;
+                });
+
+                htmlContent += `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span class="order-id"><i class="fas fa-hashtag"></i> ${orden.id}</span>
+                            <span class="order-date"><i class="far fa-clock"></i> ${orden.fecha}</span>
+                        </div>
+                        
+                        <ul class="order-items">
+                            ${itemsListHtml}
+                        </ul>
+                        
+                        <div class="order-footer">
+                            <div class="order-points"><i class="fas fa-star"></i> +${orden.puntos} pts</div>
+                            <div class="order-total">Total: $${parseFloat(orden.total).toFixed(2)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            historyContainer.innerHTML = htmlContent;
+        });
+    </script>
+</body>
+</html>

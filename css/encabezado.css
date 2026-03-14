@@ -1,0 +1,73 @@
+/* --- ENCABEZADO PRINCIPAL (AZUL COMO LA BARRA) --- */
+#encabezado_principal {
+    background-color: #2E4365;      /* Mismo azul del navbar */
+    border-bottom: 4px solid #E59D2C; /* Detalle en Marigold */
+    padding: 15px 0;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.contenedor {
+    width: 90%;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Por si en móvil se apilan */
+}
+
+/* Título principal con sombra (ajustada para fondo azul) */
+.main-title {
+    font-size: 3.5rem;              /* Un poco más pequeño que el original */
+    font-weight: 800;
+    color: #F3D58D;                  /* Buff */
+    margin: 0;
+    letter-spacing: 2px;
+    text-shadow: 4px 4px 0 #8A3B08;  /* Sombra sólida para que resalte sobre azul */
+    line-height: 1.2;
+}
+
+/* Texto de estado de sesión */
+#estado_sesion {
+    font-size: 1.1rem;
+    color: #2E4365;                   /* Texto azul */
+    background-color: #F3D58D;         /* Fondo buff */
+    padding: 8px 20px;
+    border-radius: 40px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid #E59D2C;         /* Borde marigold */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#estado_sesion i {
+    font-size: 1.3rem;
+    color: #2E4365;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-title {
+        font-size: 2.2rem;
+        text-shadow: 3px 3px 0 #8A3B08;
+    }
+    
+    .contenedor {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    #estado_sesion {
+        font-size: 0.95rem;
+        padding: 6px 15px;
+    }
+}
+
+.navbar {
+    margin-top: 0;
+    border-top: 2px solid #E59D2C; /* Línea de separación sutil */
+}

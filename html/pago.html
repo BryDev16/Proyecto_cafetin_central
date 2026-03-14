@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago y Perfil - Cafetín Escolar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+
+    <!--barra de navegacion-->
+    <nav class="navbar">
+
+        <div class="cart-container" id="open-cart-btn">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cart-count">0</span>
+        </div>
+
+        <div class="menu-wrapper">
+            <input type="checkbox" id="menu-toggle">
+            
+            <label for="menu-toggle" class="hamburger-label">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <ul class="nav-menu">
+                <li><a href="historialCompras.html">Ver Historial de Compras</a></li>
+                <li><a href="lealtad.html">Consultar Puntos de Lealtad</a></li>
+                <li><a href="calificacion.html">Hacer una calificación</a></li>
+                <li><a href="index.html">Cerrar Sesión</a></li>
+                
+            </ul>
+        </div>
+
+        
+    </nav>
+
+    <div class="container">
+        
+        <section id="checkout-view">
+            <div style="text-align: center;"><h2 class="section-title">Finalizar Compra</h2></div>
+            
+            <div class="card" style="display: flex; flex-wrap: wrap; gap: 2rem;">
+                
+                <div style="flex: 1; min-width: 300px;">
+                    <h3>Tu Pedido</h3>
+                    <div id="cart-summary">
+                        </div>
+                </div>
+
+                <div style="flex: 1; min-width: 300px; background-color: #fcf9f2; padding: 20px; border-radius: 10px;">
+                    <h3>Datos de Pago</h3>
+                    <form id="payment-form">
+                        <div class="form-group">
+                            <label>Nombre en la tarjeta</label>
+                            <input type="text" placeholder="Alex Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Número de Tarjeta</label>
+                            <input type="text" placeholder="•••• •••• •••• 1234" required>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label>Vencimiento</label>
+                                <input type="text" placeholder="MM/AA" required>
+                            </div>
+                            <div class="form-group">
+                                <label>CVV</label>
+                                <input type="password" placeholder="•••" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary" id="btn-pay">Pagar Ahora</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="status-view" class="card hidden status-screen">
+            <div id="loading-state" class="loading">
+                <i class="fas fa-circle-notch"></i>
+                <h2>Procesando pago...</h2>
+                <p>Por favor, no cierres esta ventana.</p>
+            </div>
+            <div id="success-state" class="success hidden">
+                <i class="fas fa-check-circle"></i>
+                <h2>¡Pago Exitoso!</h2>
+                <h2>¡Gracias por su compra!</h2>
+                <p id="points-earned-msg">Has ganado puntos de lealtad.</p>
+                <a href="menu.html" class="back-link">Volver al menu principal</a>
+            </div>
+        </section>
+
+        <section id="profile-view" class="hidden">
+            <div style="text-align: center;"><h2 class="section-title">Mi Perfil Escolar</h2></div>
+            
+                <a href="menu.html" class="back-link">Volver a la tienda</a>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- FOOTER -->
+        <footer class="footer">
+            Coffee Main(). Cafetin Central. Hecho por y para estudiantes.
+        </footer>
+    </div>
+    <script>
+        // --- 1. Estado Inicial ---
+const pointsPerItem = 10; 
+
+// Leemos el carrito y los puntos guardados
+let currentCart = JSON.parse(localStorage.getItem('cafetin_cart')) || [];
+let userPoints = parseInt(localStorage.getItem('puntos_lealtad')) || 0;
+
+const cartSummaryDiv = document.getElementById('cart-summary');
+const paymentForm = document.getElementById('payment-form');
+const btnPay = document.getElementById('btn-pay');
+
+// Vistas
+const checkoutView = document.getElementById('checkout-view');
+const statusView = document.getElementById('status-view');
+const loadingState = document.getElementById('loading-state');
+const successState = document.getElementById('success-state');
+const pointsEarnedMsg = document.getElementById('points-earned-msg');
+
+function renderCart() {
+    let total = 0;
+    let totalItems = 0;
+    cartSummaryDiv.innerHTML = '';
+
+    if (currentCart.length === 0) {
+        cartSummaryDiv.innerHTML = '<p style="text-align:center; color:#d9534f; font-weight:bold;">Tu carrito está vacío.</p>';
+        btnPay.disabled = true;
+        btnPay.innerText = "Carrito vacío";
+        return { total: 0, totalItems: 0 };
+    }
+
+    currentCart.forEach(item => {
+        const itemQty = item.quantity || 1;
+        const itemTotal = item.price * itemQty;
+        total += itemTotal;
+        totalItems += itemQty;
+        cartSummaryDiv.innerHTML += `
+            <div class="cart-item" style="display:flex; justify-content:space-between;">
+                <span>${itemQty}x ${item.name}</span>
+                <span>$${itemTotal.toFixed(2)}</span>
+            </div>`;
+    });
+
+    cartSummaryDiv.innerHTML += `
+        <div class="cart-total" style="border-top:1px solid #ccc; margin-top:10px; padding-top:10px; font-weight:bold; display:flex; justify-content:space-between;">
+            <span>Total:</span><span>$${total.toFixed(2)}</span>
+        </div>`;
+    
+    return { total: total.toFixed(2), totalItems };
+}
+
+const cartData = renderCart();
+
+paymentForm.addEventListener('submit', function(e) {
+    e.preventDefault(); 
+    checkoutView.classList.add('hidden');
+    statusView.classList.remove('hidden');
+    setTimeout(procesarCompraExitosa, 2000); 
+});
+
+function procesarCompraExitosa() {
+    const earnedPoints = cartData.totalItems * pointsPerItem;
+    
+    // 1. ACTUALIZAR PUNTOS EN LOCALSTORAGE
+    userPoints += earnedPoints;
+    localStorage.setItem('puntos_lealtad', userPoints);
+
+    // 2. CREAR REGISTRO DE HISTORIAL
+    const nuevaOrden = {
+        id: 'ORD-' + Math.floor(Math.random() * 10000),
+        fecha: new Date().toLocaleString(),
+        items: [...currentCart], // Copia del carrito actual
+        total: cartData.total,
+        puntos: earnedPoints
+    };
+
+    let historial = JSON.parse(localStorage.getItem('cafetin_historial')) || [];
+    historial.unshift(nuevaOrden);
+    localStorage.setItem('cafetin_historial', JSON.stringify(historial));
+
+    // 3. ¡CRUCIAL! VACIAR EL CARRITO EN LOCALSTORAGE
+    localStorage.removeItem('cafetin_cart');
+    
+    // 4. ACTUALIZAR UI DE ÉXITO
+    loadingState.classList.add('hidden');
+    successState.classList.remove('hidden');
+    pointsEarnedMsg.innerHTML = `¡Felicidades! Has sumado <strong>${earnedPoints}</strong> puntos.`;
+}
+    </script>
+</body>
+</html>

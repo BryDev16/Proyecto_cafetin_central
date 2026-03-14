@@ -1,0 +1,66 @@
+.productos-grid {
+    display: grid;
+    /* Esto hace que las tarjetas se adapten al tamaño de la pantalla (responsive) */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 2rem;
+}
+
+.product-card {
+    background-color: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border: 1px solid #F3D58D;
+    transition: transform 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.product-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover; /* Evita que la imagen se deforme */
+    background-color: #EBDDC5; /* Color de fondo por si no carga la imagen */
+}
+
+.product-info {
+    padding: 15px;
+    flex-grow: 1; /* Empuja el botón hacia abajo */
+    display: flex;
+    flex-direction: column;
+}
+
+.product-title {
+    margin: 0 0 10px 0;
+    color: #2E4365;
+    font-size: 1.2rem;
+}
+
+.product-price {
+    font-weight: bold;
+    color: #8A3B08;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+}
+
+.btn-add-cart {
+    background-color: #E59D2C;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: auto; /* Mantiene el botón pegado abajo */
+}
+
+.btn-add-cart:hover {
+    background-color: #8A3B08;
+}
